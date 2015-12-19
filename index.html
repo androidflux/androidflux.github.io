@@ -31,6 +31,9 @@
 	<script type="text/javascript">
 		$(document).ready(function(){
 			$("ul.nav-site li a").click(function(event) {
+				if ($(this).attr("id") == "link") {
+					return true;
+				}
 				$.ajax({
 					url: $(this).attr("href"),
 					data:{
@@ -40,6 +43,8 @@
 						$("div.page-content").html(data);
 					}
 				});
+				$("ul.nav-site li a").removeClass();
+				$(this).addClass("active");
 				return false;
 			});
 		});
@@ -55,7 +60,7 @@
 				<ul class="nav-site">
 					<li><a href="docs.html" class="active">docs</a></li>
 					<li><a href="support.html" class="">support</a></li>
-					<li><a href="http://github.com/facebook/flux" class="">github</a></li>
+					<li><a id="link" href="https://github.com/androidflux/androidflux.github.io" class="">github</a></li>
 				</ul>
 			</div>
 		</div>
