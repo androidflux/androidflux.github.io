@@ -21,12 +21,29 @@
 		    width: 200px !important;
 		    border: 2px rgba(255,255,255,.38) solid !important;
 		    border-radius: 4px !important;
-		}
+		
 
 		.en-markup-crop-options div div:first-of-type {
 		    margin-left: 0px !important;
 		}
 	</style>
+	<script type="text/javascript" src="static/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$("ul.nav-site li a").click(function(event) {
+				$.ajax({
+					url: $(this).attr("href"),
+					data:{
+					},
+					success: function(data) {
+						// insert page
+						$("div.page-content").html(data);
+					}
+				});
+				return false;
+			});
+		});
+	</script>
 </head>
 <body>
 	<div class="container">
@@ -36,66 +53,14 @@
 					<img class="nav-logo" src="static/flux_logo.svg" width="50" height="50">Flux
 				</a>
 				<ul class="nav-site">
-					<li><a href="/flux/docs/overview.html#content" class="active">docs</a></li>
-					<li><a href="/flux/support.html" class="">support</a></li>
+					<li><a href="docs.html" class="active">docs</a></li>
+					<li><a href="support.html" class="">support</a></li>
 					<li><a href="http://github.com/facebook/flux" class="">github</a></li>
 				</ul>
 			</div>
 		</div>
 
-		<section class="content wrap documentationContent">
-			<div class="nav-docs">
-				<div class="nav-docs-section">
-					<h3>Quick Start</h3>
-					<ul>
-						<li><a style="margin-left:0;" class="active" href="/flux/docs/overview.html#content">Overview</a></li>
-						<li><a style="margin-left:0;" class="" href="/flux/docs/todo-list.html#content">Tutorial – Todo List</a></li>
-						<li><a style="margin-left:0;" class="" href="/flux/docs/chat.html#content">Tutorial – Chat</a></li>
-					</ul>
-				</div>
-				<div class="nav-docs-section">
-					<h3>Guides</h3>
-					<ul>
-						<li><a style="margin-left:0;" class="" href="/flux/docs/actions-and-the-dispatcher.html#content">Actions and the Dispatcher</a></li>
-						<li><a style="margin-left:0;" class="" href="/flux/docs/testing-flux-applications.html#content">Testing Flux Applications</a></li>
-					</ul>
-				</div>
-				<div class="nav-docs-section">
-					<h3>Reference</h3>
-					<ul>
-						<li><a style="margin-left:0;" class="" href="/flux/docs/dispatcher.html#content">Dispatcher</a></li>
-						<li><a style="margin-left:0;" class="" href="/flux/docs/flux-utils.html#content">Flux Utils</a></li>
-					</ul>
-				</div>
-				<div class="nav-docs-section">
-					<h3>Community Resources</h3>
-					<ul>
-						<li><a style="margin-left:0;" class="" href="/flux/docs/videos.html#content">Videos</a></li>
-						<li><a style="margin-left:0;" class="" href="/flux/docs/examples-and-tools.html#content">Examples and Tools</a></li>
-					</ul>
-				</div>
-				<div class="nav-docs-section">
-					<h3>Complementary</h3>
-					<ul>
-						<li><a target="_blank" style="margin-left:0;" class="" href="http://facebook.github.io/react/">React – UI Library</a></li>
-						<li><a target="_blank" style="margin-left:0;" class="" href="http://facebook.github.io/immutable-js/">ImmutableJS – Immutable Data</a></li>
-						<li><a target="_blank" style="margin-left:0;" class="" href="http://facebook.github.io/jest/">Jest – Unit Testing</a></li>
-					</ul>
-				</div>
-			</div>
-
-			<div class="inner-content">
-				<a id="content"></a>
-				<h1>Overview</h1>
-				<div>
-					<!--This is real content-->
-					<p>Flux is the application architecture that Facebook uses for building client-side web applications.  It complements React's composable view components by utilizing a unidirectional data flow.  It's more of a pattern rather than a formal framework, and you can start using Flux immediately without a lot of new code.</p>
-				</div>
-				<div class="docs-prevnext">
-  					<a class="docs-next" href="todo-list.html#content">Next →</a>
-  				</div>
-  			</div>
-  		</section>
+		<div class="page-content"></div>
 
   		<footer class="wrap">
   			<div class="right">© 2014-2015 Facebook Inc.</div>
