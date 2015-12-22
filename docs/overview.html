@@ -13,9 +13,9 @@
 
 	<p>Flux应用程序包含三个主要部分：Dispatcher、Store和View。需要注意的是这和MVC的Model-View-Controller并不是对应关系，这里的View是Controller-View，负责处理UI逻辑和一些简单的事件分发，而在Android平台中，完美的对应的到Activity(或Fragment)和相应的布局文件(layout.xml)。Store部分也不是Model（业务Model），而是维护UI状态的PresentationModel，用来维护一组逻辑相关的UI状态。Dispatcher不会被直接使用，而是通过通过一个帮助类ActionCreator来封装Dispatcher，并提供便捷的方法来分发View中产生的事件，消息的传递通过Action（Action是一个普通的POJO类）来封装。</p>
 
-	<p>当用户点击UI上某个按钮的时候，一个完整的流程是这样的：按钮被点击触发回调方法，在回调方法中调用ActionCreator的方法，ActionCreator会根据传入参数创建Action并通过Dispatcher发送给Store，所有订阅了这个Action的Store会接收到订阅的Action并消化Action，然后Store会发送UI状态改变的事件给相关的Activity（或Fragment)，Activity在收到状态发生改变的事件之后，开始更新UI（更新UI的过程中会从Store获取所有需要的数据）。</p>
+	<p>当用户点击UI上某个按钮的时候，一个完整的流程是这样的：按钮被点击触发回调方法，在回调方法中调用ActionCreator提供的有语义的的方法，ActionCreator会根据传入参数创建Action并通过Dispatcher发送给Store，所有订阅了这个Action的Store会接收到订阅的Action并消化Action，然后Store会发送UI状态改变的事件给相关的Activity（或Fragment)，Activity在收到状态发生改变的事件之后，开始更新UI（更新UI的过程中会从Store获取所有需要的数据）。</p>
 
-	<p>Store的设计是很精巧的设计（比较类似PresentationModel模式），每一个Store仅仅负责一片逻辑相关的UI区域，用来维护这片UI的状态，比如有一个设置界面，它有有很多设置项，那么可以让它对应一个SettingStore，这个Store仅仅用来维护Setting的状态。Store对外仅仅提供get方法，它的更新通过Dispatcher派发的Action来更新，当有新的Action进来的时候，它会负责处理Action，并转化成UI需要的数据。</p>
+	<p>Store的设计是很精巧的（比较类似PresentationModel模式），每一个Store仅仅负责一片逻辑相关的UI区域，用来维护这片UI的状态，比如有一个设置界面，它有有很多设置项，那么可以让它对应一个SettingStore，这个Store仅仅用来维护Setting的状态。Store对外仅仅提供get方法，它的更新通过Dispatcher派发的Action来更新，当有新的Action进来的时候，它会负责处理Action，并转化成UI需要的数据。</p>
 
 	<h2>结构和数据流</h2>
 	<p>在Flux架构的应用中，数据是朝单一方向流动的：</p>
@@ -40,14 +40,14 @@
 
 	<p>这种结构很容易让我们像函数式响应编程(functional-reactive-programming)或者更具的说是数据流(data-flow-programming)编程(flow-based-programming)一样透析我们的应用，在应用中所有的数据流都是单向，没有双向绑定。App的状态全部是通过Store来维护的，这样可以允许App的各个部分保持高度的解耦。Store之间有时也会存在依赖，他们会通过一个严格的结构来维护，通过来Dispatcher保证数据的同步更新</p>
 
-	<p>数据的双向绑定会导致层叠更新的状态，比如一个对象导致了另一个对象的更新，另一个对象或许又会导致更多对象的更新。随着App的增长，这种效应导致无法预测App的那些部分会因为用户的操作而发生改变。但是当数据的更新只能走一轮的时候（a single round），整个系统就会变得更加可预测。</p>
+	<p>数据的双向绑定会导致层叠更新的问题，比如一个对象导致了另一个对象的更新，另一个对象或许又会导致更多对象的更新。随着App的增长，这种效应导致无法预测App的那些部分会因为用户的操作而发生改变。但是当数据的更新只能走一轮的时候（a single round），整个系统就会变得更加可预测。</p>
 
 
 	下面看看Flux应用的各个部分。一个比较好的开始是Dispatcher。
 
 	<h2>只有一个Dispatcher</h2>
 
-	<p>在Flux应用中Dispatcher是中心枢纽，管理所有的数据流。它实际上管理的是Store注册的一系列回调接口，本身没有其他逻辑 —— 它仅仅是用来把Action发送到各个Store的一套简单的机制。每个Store都会把自己注册到这里，并提供自己的回调方法。当ActionCreator给Dispatcher传递一个Action的时候，应用中所有的Store都会通过回调接口收到通知</p>
+	<p>在Flux应用中Dispatcher是中心枢纽，管理所有的数据流。它实际上管理的是Store注册的一系列回调接口，本身没有其他逻辑 —— 它仅仅是用来把Action发送到各个Store的一套简单的机制。每个Store都会把自己注册到这里，并提供自己的回调方法。当ActionCreator给Dispatcher传递一个Action的时候，应用中所有的Store都会通过回调接口收到通知。</p>
 
 	<p>随着App的增长，Dispatcher会变得更加重要，它可以通过调整回调方法的触发次序来管理Store之间的依赖关系。Store可以声明等待其他Store更新完毕再更新自己。</p>
 
@@ -67,11 +67,11 @@
 	<p>通常一个Activity可以对应一个Store，但是当Activity包含几个Fragment，每个Fragment的功能比较独立时，也可以让每个Fragment分别对应自己的Store。</p>
 
 	<h2>Actions</h2>
-	<p>通常Dispatcher会提供一个方法来分发事件到Store，并包含一些数据，这通常封装成一个Action。Action的创建通常会被封装到一个有语境意义的Helper方法，它会把Action传给Dispatcher。比如，我们会在Todo-List应用中，改变某条Todo的文字内容，这时可以在ActionCreator类中创建一个方法叫做 <code>updateText(todoId, newText)</code>，然后在View的事件处理方法中调用这个方法，这样就可以响应用户事件了。ActionCreator还会给Action添加一个合适的类型，这样Store就知道如何处理这个Action了，比如在这个例子中，类型可以叫<code>TODO_UPDATE_TEXT</code>。</p>
+	<p>Dispatcher会提供一个方法来分发事件到Store，并包含一些数据，这通常封装成一个Action。Action的创建一般被封装到一个有语境意义的Helper方法（ActionCreator），它会把Action传给Dispatcher。比如，我们会在Todo-List应用中，改变某条Todo的文字内容，这时可以在ActionCreator类中创建一个方法叫做 <code>updateText(todoId, newText)</code>，然后在View的事件处理方法中调用这个方法，这样就可以响应用户事件了。ActionCreator还会给Action添加一个合适的类型，这样Store就知道如何处理这个Action了，比如在这个例子中，类型可以叫<code>TODO_UPDATE_TEXT</code>。</p>
 
 	<p>Action也可能来自其他的地方，比如Server或者缓存，这发生在数据初始化的时候。也有可能发生在服务器返回错误码或者服务器有数据更新的时候（比如推送消息）。</p>
 
-	<p><i>Overview部分为Android平台特别写的，之后的Flux部分译自Facebook的<a href="http://facebook.github.io/flux/docs/overview.html#structure-and-data-flow">Flux介绍</a>。</i> </p>
+	<p><i>注：<strong>一览</strong>部分为Android平台特别说明，之后的Flux部分译自Facebook的<a href="http://facebook.github.io/flux/docs/overview.html#structure-and-data-flow">Flux介绍</a>，针对Android平台略有适配。</i> </p>
 
 </div>
 
