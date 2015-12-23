@@ -65,7 +65,7 @@ var DocsSidebar = React.createClass({
     if (metadata.permalink.match(/^https?:/)) {
       return metadata.permalink;
     }
-    return '/flux/' + metadata.permalink + '#content';
+    return '/' + metadata.permalink + '#content';
   },
 
   render: function() {

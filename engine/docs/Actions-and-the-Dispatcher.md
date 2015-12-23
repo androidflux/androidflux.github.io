@@ -16,7 +16,7 @@ The Dispatcher
 The ___dispatcher___ is a singleton, and operates as the central hub of data flow in a Flux application. It is essentially a registry of callbacks, and can invoke these callbacks in order. Each ___store___ registers a callback with the ___dispatcher___. When new data comes into the ___dispatcher___, it then uses these callbacks to propagate that data to all of the ___stores___. The process of invoking the callbacks is initiated through the `dispatch()` method, which takes a data payload object as its sole argument. This payload is typically synonymous with an ___action___.
 
 <figure class="diagram">
-  <img src="/flux/img/flux-simple-f8-diagram-with-client-action-1300w.png" alt="data flow in Flux with data originating from user interactions" width=650 />
+  <img src="/img/flux-simple-f8-diagram-with-client-action-1300w.png" alt="data flow in Flux with data originating from user interactions" width=650 />
 </figure>
 
 

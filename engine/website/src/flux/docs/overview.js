@@ -26,7 +26,7 @@ Data in a Flux application flows in a single direction:
 </p>
 
 <figure class="diagram associated-with-next-sibling">
-  <img src="/flux/img/flux-simple-f8-diagram-1300w.png" alt="unidirectional data flow in Flux" />
+  <img src="/img/flux-simple-f8-diagram-1300w.png" alt="unidirectional data flow in Flux" />
 </figure>
 
 A unidirectional data flow is central to the Flux pattern, and the above diagram should be __the primary mental model for the Flux programmer__. The dispatcher, stores and views are independent nodes with distinct inputs and outputs. The actions are simple objects containing the new data and an identifying _type_ property.  
@@ -36,7 +36,7 @@ The views may cause a new action to be propagated through the system in response
 </p>
 
 <figure class="diagram">
-  <img src="/flux/img/flux-simple-f8-diagram-with-client-action-1300w.png" alt="data flow in Flux with data originating from user interactions" />
+  <img src="/img/flux-simple-f8-diagram-with-client-action-1300w.png" alt="data flow in Flux with data originating from user interactions" />
 </figure>
 
 <p class="associated-with-next-sibling">
@@ -44,7 +44,7 @@ All data flows through the dispatcher as a central hub.  Actions are provided to
 </p>
 
 <figure class="diagram">
-  <img src="/flux/img/flux-simple-f8-diagram-explained-1300w.png" alt="varying transports between each step of the Flux data flow" />
+  <img src="/img/flux-simple-f8-diagram-explained-1300w.png" alt="varying transports between each step of the Flux data flow" />
 </figure>
 
 This structure allows us to reason easily about our application in a way that is reminiscent of _functional reactive programming_, or more specifically _data-flow programming_ or _flow-based programming_, where data flows through the application in a single direction — there are no two-way bindings. Application state is maintained only in the stores, allowing the different parts of the application to remain highly decoupled. Where dependencies do occur between stores, they are kept in a strict hierarchy, with synchronous updates managed by the dispatcher.

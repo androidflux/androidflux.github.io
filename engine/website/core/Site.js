@@ -20,7 +20,7 @@ var Site = React.createClass({
           <meta property="og:url" content="http://facebook.github.io/flux/index.html" />
           <meta property="og:description" content="Application Architecture for Building User Interfaces" />
 
-          <link rel="stylesheet" href="/flux/css/flux.css" />
+          <link rel="stylesheet" href="/css/flux.css" />
 
           <script type="text/javascript" src="//use.typekit.net/vqa1hcx.js"></script>
           <script type="text/javascript">{'try{Typekit.load();}catch(e){}'}</script>
@@ -30,8 +30,8 @@ var Site = React.createClass({
           <div className="container">
             <div className="nav-main">
               <div className="wrap">
-                <a className="nav-home" href="/flux/">
-                  <img className="nav-logo" src="/flux/img/flux_logo.svg" width="50" height="50" />
+                <a className="nav-home" href="/">
+                  <img className="nav-logo" src="/img/flux_logo.svg" width="50" height="50" />
                   Flux
                 </a>
                 <HeaderLinks section={this.props.section} />
