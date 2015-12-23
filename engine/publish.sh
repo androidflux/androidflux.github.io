@@ -17,6 +17,7 @@ cp -R website/build/flux/* ../
 # 4. cleanup building cache
 rm -Rf website/build/
 # 5. push to github
+cd ../
 git add --all
 git commit -m "update website"
 git push origin master
