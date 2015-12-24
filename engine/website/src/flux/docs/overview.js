@@ -4,8 +4,6 @@
 var React = require("React");
 var Layout = require("DocsLayout");
 var content = `
-*我们正在做Flux在Android平台的适配工作，有一些文档需要翻译，并且提供Android版本的适配。欢迎[加入我们]("/support.html")。*
-
 AndroidFlux是Facebook的<a href="https://facebook.github.io/flux/">Flux</a> 架构的Android实现。Flux是Facebook在14年提出的一种Web前端架构，主要用来处理复杂的UI逻辑的一致性问题（当时是为了解决Web页面的消息通知问题）。经过实践之后发现，这种架构可以很好的应用于Android平台，相对于其他的MVC/MVP/MVVM等模式，拥有良好的文档和更具体的设计，比较适合于快速开发实现。
 
 Flux模式最大的特点是单向的数据流，它的UI状态更新模式继承了MVC模式的设计思想。Flux并不是具体的框架，而是一套处理UI问题的模式，AndroidFlux同样不是具体的框架，你不需要导入或者集成任何新的代码就可以使用，而你需要做的事情是了解这套思想、遵循这种开发模式，查看我们提供的Android代码示例，写自己的代码。
