@@ -1,11 +1,13 @@
 ---
 id: overview
-title: Overview
+title: AndroidFlux一览
 layout: docs
 category: Quick Start
 permalink: docs/overview.html
 next: todo-list
 ---
+
+*我们正在做Flux在Android平台的适配工作，有一些文档需要翻译，并且提供Android版本的适配。欢迎[加入我们]("/support.html")。*
 
 AndroidFlux是Facebook的<a href="https://facebook.github.io/flux/">Flux</a> 架构的Android实现。Flux是Facebook在14年提出的一种Web前端架构，主要用来处理复杂的UI逻辑的一致性问题（当时是为了解决Web页面的消息通知问题）。经过实践之后发现，这种架构可以很好的应用于Android平台，相对于其他的MVC/MVP/MVVM等模式，拥有良好的文档和更具体的设计，比较适合于快速开发实现。
 

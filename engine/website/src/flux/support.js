@@ -14,26 +14,14 @@ var support = React.createClass({
 
         <section className="content wrap documentationContent nosidebar">
           <div className="inner-content">
-            <h1>Need help?</h1>
+            <h2>Need help?!</h2>
             <div className="subHeader"></div>
             <p>
-              <strong>Flux</strong> is worked on full-time by Facebook&#39;s
-              product infrastructure user interface
-              engineering teams. They&#39;re often around and available for
-              questions.
+                有任何问题请联系:ntop.liu AT gmail.com, 另外我们的文档还不够完善，如果您在工作之余还有空闲时间欢迎加入我们，
+                可以在<a href="https://github.com/androidflux/androidflux.github.io/issues">GithubIssue</a>领取任务。
+                如何更新文档查看<a href="https://github.com/androidflux/androidflux.github.io/tree/master/engine">这里的说明</a>。    
             </p>
-
-            <H2>Stack Overflow</H2>
-            <p>Many members of the community use Stack Overflow to ask questions. Read through the <a href="http://stackoverflow.com/questions/tagged/reactjs">existing questions</a> tagged with <strong>reactjs</strong> or <a href="http://stackoverflow.com/questions/ask">ask your own</a>!</p>
-            <H2>Google Groups mailing list</H2>
-            <p><a href="http://groups.google.com/group/reactjs" target="_blank">The <strong>reactjs</strong> Google Group</a> is also a good place to ask questions and find answers.</p>
-            <H2>IRC</H2>
-            <p>Many developers and users idle on Freenode.net&#39;s IRC network in <strong><a href="irc://chat.freenode.net/reactjs">#reactjs on freenode</a></strong>.</p>
-            <H2>Twitter</H2>
-            <p><a href="https://twitter.com/search?q=%23fluxjs"><strong>#fluxjs</strong> hash tag on Twitter</a> is used to keep up with the latest Flux news.</p>
-
-            <p><Center><a className="twitter-timeline" data-dnt="true" data-chrome="nofooter noheader transparent" href="https://twitter.com/search?q=%23fluxjs" data-widget-id="493727680810848257"></a></Center></p>
-          </div>
+            </div>
         </section>
 
       </Site>
