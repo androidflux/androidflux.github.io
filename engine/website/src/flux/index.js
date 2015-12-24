@@ -14,9 +14,9 @@ var index = React.createClass({
       <Site>
         <div className="hero">
           <div className="wrap">
-            <div className="text"><strong>Flux</strong></div>
+            <div className="text"><strong>Android Flux</strong></div>
             <div className="minitext">
-              Application Architecture for Building User Interfaces
+              当Android遇到了Flux，架构Android应用的新方式。
             </div>
           </div>
         </div>
@@ -24,7 +24,9 @@ var index = React.createClass({
         <section className="content wrap">
           <section className="home-section home-getting-started">
             <p>
-              Flux is the application architecture that Facebook uses for building client-side web applications.  It complements React's composable view components by utilizing a unidirectional data flow.  It's more of a pattern rather than a formal framework, and you can start using Flux immediately without a lot of new code.
+            AndroidFlux是Facebook的<a href="https://facebook.github.io/flux/">Flux</a> 架构的Android实现。
+            Flux是Facebook在14年提出的一种Web前端架构，这种架构可以很好的应用于Android平台，相对于其他的MVC/MVP/MVVM等模式，
+            拥有良好的文档和更具体的设计，比较适合于快速开发实现。
             </p>
           </section>
 

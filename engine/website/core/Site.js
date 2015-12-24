@@ -32,7 +32,7 @@ var Site = React.createClass({
               <div className="wrap">
                 <a className="nav-home" href="/">
                   <img className="nav-logo" src="/img/flux_logo.svg" width="50" height="50" />
-                  Flux
+                  AndroidFlux
                 </a>
                 <HeaderLinks section={this.props.section} />
               </div>
@@ -41,7 +41,7 @@ var Site = React.createClass({
             {this.props.children}
 
             <footer className="wrap">
-              <div className="right">© 2014-2015 Facebook Inc.</div>
+              <div className="right">© 2014-2015 AndroidFlux.</div>
             </footer>
           </div>
 

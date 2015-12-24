@@ -7,7 +7,7 @@ var HeaderLinks = React.createClass({
   links: [
     {section: 'docs', href: '/docs/overview.html#content', text: 'docs'},
     {section: 'support', href: '/support.html', text: 'support'},
-    {section: 'github', href: 'http://github.com/facebook/flux', text: 'github'},
+    {section: 'github', href: 'https://github.com/androidflux/androidflux.github.io', text: 'github'},
   ],
 
   render: function() {

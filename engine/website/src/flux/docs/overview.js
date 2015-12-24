@@ -31,13 +31,13 @@ Store的设计是很精巧的（比较类似PresentationModel模式），每一�
 <p class="associated-with-next-sibling">Views可以在响应用户操作的时候产生新的Action：</p>
 
 <figure class="diagram">
-    <img src="/docs/img/flux-simple-f8-diagram-with-client-action-1300w.png" alt="data flow in Flux with data originating from user interactions">
+    <img src="/img/flux-simple-f8-diagram-with-client-action-1300w.png" alt="data flow in Flux with data originating from user interactions">
 </figure>
 
 <p class="associated-with-next-sibling">所有的数据都通过Dispatcher这个枢纽中心传递。Action通过ActionCreator的帮助类产生并传递给Dispatcher，Action大部分情况下是在用户和View交互的时候产生。然后Dispatcher会调用Store注册在其(Dispatcher)中的回调方法, 把Action发送到所有注册的Store。在Store的回调方法内，Store可以处理任何和自身状态有关联的Action。Store接着会触发一个 <i>change</i> 事件来告知Controller-View数据层发生变化。Controller-View监听这些事件，在事件处理方法中从Store中读取数据。Controller-View会调用自己的<code>setState()</code>方法渲染UI。</p>
 
 <figure class="diagram">
-  <img src="/flux/img/flux-simple-f8-diagram-explained-1300w.png" alt="varying transports between each step of the Flux data flow" />
+  <img src="/img/flux-simple-f8-diagram-explained-1300w.png" alt="varying transports between each step of the Flux data flow" />
 </figure>
 
 这种结构很容易让我们像函数式响应编程(functional-reactive-programming)或者更具的说是数据流(data-flow-programming)编程(flow-based-programming)一样透析我们的应用，在应用中所有的数据流都是单向，没有双向绑定。App的状态全部是通过Store来维护的，这样可以允许App的各个部分保持高度的解耦。Store之间有时也会存在依赖，他们会通过一个严格的结构来维护，通过来Dispatcher保证数据的同步更新。
