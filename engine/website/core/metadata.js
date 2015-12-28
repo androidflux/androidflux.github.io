@@ -45,6 +45,14 @@ module.exports = {
       "next": "videos"
     },
     {
+      "id": "helloworld",
+      "title": "Tutorial - Hello World",
+      "layout": "docs",
+      "category": "Quick Start",
+      "permalink": "docs/helloworld.html",
+      "next": "todo-list"
+    },
+    {
       "id": "immutable",
       "title": "ImmutableJS – Immutable Data",
       "layout": "docs",
@@ -65,7 +73,7 @@ module.exports = {
       "layout": "docs",
       "category": "Quick Start",
       "permalink": "docs/overview.html",
-      "next": "todo-list"
+      "next": "helloworld"
     },
     {
       "id": "react",

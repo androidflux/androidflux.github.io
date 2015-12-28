@@ -37,7 +37,7 @@ glob('src/**/*.*', function(er, files) {
 
   files.forEach(function(file) {
     var targetFile = file.replace(/^src/, 'build');
-
+    console.log("targetFile:" + targetFile);
     if (file.match(/\.js$/)) {
       targetFile = targetFile.replace(/\.js$/, '.html');
       queue.push(function(cb) {

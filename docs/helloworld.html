@@ -1,0 +1,236 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>Flux | Application Architecture for Building User Interfaces</title><meta name="viewport" content="width=device-width"><meta property="og:title" content="Flux | Application Architecture for Building User Interfaces"><meta property="og:type" content="website"><meta property="og:url" content="http://facebook.github.io/flux/index.html"><meta property="og:description" content="Application Architecture for Building User Interfaces"><link rel="stylesheet" href="/css/flux.css"><script type="text/javascript" src="//use.typekit.net/vqa1hcx.js"></script><script type="text/javascript">try{Typekit.load();}catch(e){}</script></head><body><div class="container"><div class="nav-main"><div class="wrap"><a class="nav-home" href="/"><img class="nav-logo" src="/img/flux_logo.svg" width="50" height="50">AndroidFlux</a><ul class="nav-site"><li><a href="/docs/overview.html#content" class="active">docs</a></li><li><a href="/support.html" class="">support</a></li><li><a href="https://github.com/androidflux/androidflux.github.io" class="">github</a></li></ul></div></div><section class="content wrap documentationContent"><div class="nav-docs"><div class="nav-docs-section"><h3>Quick Start</h3><ul><li><a style="margin-left:0;" class="" href="/docs/overview.html#content">AndroidFlux一览</a></li><li><a style="margin-left:0;" class="active" href="/docs/helloworld.html#content">Tutorial - Hello World</a></li><li><a style="margin-left:0;" class="" href="/docs/todo-list.html#content">Tutorial – Todo List</a></li><li><a style="margin-left:0;" class="" href="/docs/chat.html#content">Tutorial – Chat</a></li></ul></div><div class="nav-docs-section"><h3>Guides</h3><ul><li><a style="margin-left:0;" class="" href="/docs/actions-and-the-dispatcher.html#content">Actions and the Dispatcher</a></li><li><a style="margin-left:0;" class="" href="/docs/testing-flux-applications.html#content">Testing Flux Applications</a></li></ul></div><div class="nav-docs-section"><h3>Reference</h3><ul><li><a style="margin-left:0;" class="" href="/docs/dispatcher.html#content">Dispatcher</a></li><li><a style="margin-left:0;" class="" href="/docs/flux-utils.html#content">Flux Utils</a></li></ul></div><div class="nav-docs-section"><h3>Community Resources</h3><ul><li><a style="margin-left:0;" class="" href="/docs/videos.html#content">Videos</a></li><li><a style="margin-left:0;" class="" href="/docs/examples-and-tools.html#content">Examples and Tools</a></li></ul></div><div class="nav-docs-section"><h3>Complementary</h3><ul><li><a target="_blank" style="margin-left:0;" class="" href="http://facebook.github.io/react/">React – UI Library</a></li><li><a target="_blank" style="margin-left:0;" class="" href="http://facebook.github.io/immutable-js/">ImmutableJS – Immutable Data</a></li><li><a target="_blank" style="margin-left:0;" class="" href="http://facebook.github.io/jest/">Jest – Unit Testing</a></li></ul></div></div><div class="inner-content"><a id="content"></a><h1>Tutorial - Hello World</h1><div><p>这是一个极简的HelloWorld应用，主要用来展示如何在Android平台架构Flux应用。并提供一些基础代码，方便开发者直接Copy这些代码到自己的工程中，省掉重新造轮子的过程。代码地址在<a href="https://github.com/androidflux/flux" target="_blank">Flux-HelloWorld</a>，接下来会一步步的解释这个应用是如何构建的。</p><p><em>Demo程序是用AndroidStudio开发的，假设你已经了解Android和AndroidStudioIDE，如果你已经很熟悉Android应用的开发，看完<a href="http://androidflux.github.io/docs/overview.html#content" target="_blank">AndroidFlux一览</a>或许已经可以开发出基于Flux框架的应用，如果你并不熟悉Flux或者Android，务必先读完这篇文档</em></p><h2><a class="anchor" name=""></a>源码结构 <a class="hash-link" href="#">#</a></h2><p>本着架构即目录的思想，让我们先看一下源码结构，整个的源码结构是这样的：</p><div class="prism language-javascript">➜  tree <span class="token punctuation">.</span>
+<span class="token punctuation">.</span>
+├── MainActivity<span class="token punctuation">.</span>java
+├── actions
+│   ├── Action<span class="token punctuation">.</span>java
+│   ├── ActionsCreator<span class="token punctuation">.</span>java
+│   └── MessageAction<span class="token punctuation">.</span>java
+├── dispatcher
+│   └── Dispatcher<span class="token punctuation">.</span>java
+├── model
+│   └── Message<span class="token punctuation">.</span>java
+└── stores
+    ├── MessageStore<span class="token punctuation">.</span>java
+    └── Store<span class="token punctuation">.</span>java</div><p>这里包含4个目录和一个文件：</p><ol><li>MainActivity.java Flux框架中的Controller-View部分，在Android中可以是Activity或者Fragment</li><li>actions Flux框架中的Action部分，存放不同类型的<code>XXXAction.java</code>和<code>ActionsCreator.java</code>文件</li><li>dispatcher Flux框架中的Dispatcher部分，存放 <code>Dispatcher.java</code> 文件，一个应用中只需要一个Dispatcher</li><li>model 存放各种业务逻辑相关的Model文件</li><li>stores Flux框架中的Stores部分，存在各种类型的 <code>XXXStore.java</code> 文件</li></ol><h2><a class="anchor" name="dispatcher"></a>创建一个Dispatcher <a class="hash-link" href="#dispatcher">#</a></h2><p>在AndroidFlux中Dispatcher是就是一个发布-订阅模式。Store会在这里注册自己的回调接口，Dispatcher会把Action分发到注册的Store，所以它会提供一些公有方法来注册监听和分发消息。</p><div class="prism language-javascript"><span class="token comment" spellcheck="true">/**
+ * Flux的Dispatcher模块
+ * Created by ntop on 18/12/15.
+ */</span>
+public class <span class="token class-name">Dispatcher</span> <span class="token punctuation">{</span>
+    private static Dispatcher instance<span class="token punctuation">;</span>
+    private final List&lt;Store<span class="token operator">&gt;</span> stores <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ArrayList</span>&lt;<span class="token operator">&gt;</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    public static Dispatcher <span class="token keyword">get</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>instance <span class="token operator">==</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            instance <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Dispatcher</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">return</span> instance<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token function">Dispatcher<span class="token punctuation">(</span></span><span class="token punctuation">)</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+
+    public void <span class="token function">register<span class="token punctuation">(</span></span>final Store store<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        stores<span class="token punctuation">.</span><span class="token function">add<span class="token punctuation">(</span></span>store<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    public void <span class="token function">unregister<span class="token punctuation">(</span></span>final Store store<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        stores<span class="token punctuation">.</span><span class="token function">remove<span class="token punctuation">(</span></span>store<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    public void <span class="token function">dispatch<span class="token punctuation">(</span></span>Action action<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token function">post<span class="token punctuation">(</span></span>action<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    private void <span class="token function">post<span class="token punctuation">(</span></span>final Action action<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">for</span> <span class="token punctuation">(</span>Store store <span class="token punctuation">:</span> stores<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            store<span class="token punctuation">.</span><span class="token function">onAction<span class="token punctuation">(</span></span>action<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></div><p>Dispatcher对外仅暴露3个公有方法：</p><ol><li>register(final Store store) 用来注册每个Store的回调接口</li><li>unregister(final Store store) 用来接触Store的回调接口</li><li>dispatch(Action action) 用来触发Store注册的回调接口</li></ol><p>这里仅仅用一个<code>ArrayList</code>来管理Stores，对于一个更复杂的App可能需要精心设计数据结构来管理Stores组织和相互间的依赖关系。</p><h2><a class="anchor" name="stores"></a>创建Stores <a class="hash-link" href="#stores">#</a></h2><p>这里使用<a href="http://square.github.io/otto/" target="_blank">EventBus</a>来实现Store，EventBus的主要功能是用来给Controller-View发送<code>change</code>事件：</p><div class="prism language-javascript"><span class="token comment" spellcheck="true">/**
+ * Flux的Store模块
+ * Created by ntop on 18/12/15.
+ */</span>
+public abstract class <span class="token class-name">Store</span> <span class="token punctuation">{</span>
+    private  static final Bus bus <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Bus</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    protected <span class="token function">Store<span class="token punctuation">(</span></span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token punctuation">}</span>
+
+    public void <span class="token function">register<span class="token punctuation">(</span></span>final Object view<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>bus<span class="token punctuation">.</span><span class="token function">register<span class="token punctuation">(</span></span>view<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    public void <span class="token function">unregister<span class="token punctuation">(</span></span>final Object view<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>bus<span class="token punctuation">.</span><span class="token function">unregister<span class="token punctuation">(</span></span>view<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    void <span class="token function">emitStoreChange<span class="token punctuation">(</span></span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>bus<span class="token punctuation">.</span><span class="token function">post<span class="token punctuation">(</span></span><span class="token function">changeEvent<span class="token punctuation">(</span></span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    public abstract StoreChangeEvent <span class="token function">changeEvent<span class="token punctuation">(</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    public abstract void <span class="token function">onAction<span class="token punctuation">(</span></span>Action action<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    public class <span class="token class-name">StoreChangeEvent</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+<span class="token punctuation">}</span></div><p>抽象的Store类，提供了一个主要的虚方法 <code>void onAction(Action action)</code> ，这个方法是注册在Dispatcher里面的回调接口，当Dispatcher有数据派发过来的时候，可以在这里处理。</p><p>下面看一下更具体的和业务相关的MessageStore类:</p><div class="prism language-javascript"><span class="token comment" spellcheck="true">/**
+ * MessageStore类主要用来维护MainActivity的UI状态
+ * Created by ntop on 18/12/15.
+ */</span>
+public class <span class="token class-name">MessageStore</span> extends <span class="token class-name">Store</span> <span class="token punctuation">{</span>
+    private static MessageStore singleton<span class="token punctuation">;</span>
+    private Message mMessage <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Message</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    public <span class="token function">MessageStore<span class="token punctuation">(</span></span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token function">super<span class="token punctuation">(</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    public String <span class="token function">getMessage<span class="token punctuation">(</span></span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> mMessage<span class="token punctuation">.</span><span class="token function">getMessage<span class="token punctuation">(</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    @Override
+    @Subscribe
+    public void <span class="token function">onAction<span class="token punctuation">(</span></span>Action action<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        switch <span class="token punctuation">(</span>action<span class="token punctuation">.</span><span class="token function">getType<span class="token punctuation">(</span></span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            case MessageAction<span class="token punctuation">.</span>ACTION_NEW_MESSAGE<span class="token punctuation">:</span>
+                mMessage<span class="token punctuation">.</span><span class="token function">setMessage<span class="token punctuation">(</span></span><span class="token punctuation">(</span>String<span class="token punctuation">)</span> action<span class="token punctuation">.</span><span class="token function">getData<span class="token punctuation">(</span></span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">break</span><span class="token punctuation">;</span>
+            default<span class="token punctuation">:</span>
+        <span class="token punctuation">}</span>
+        <span class="token function">emitStoreChange<span class="token punctuation">(</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+
+    @Override
+    public StoreChangeEvent <span class="token function">changeEvent<span class="token punctuation">(</span></span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">StoreChangeEvent</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></div><p>在这里实现了 <code>onAction(Action action)</code> 方法，并用一个<code>switch</code>语句来路由各种不同的Action类型。同时维护了一个结构 <code>Message.java</code> 类，这个类用来记录当前要显示的消息。Store类只能通过Dispatcher来更新（不要提供<code>setter</code>方法），对外仅暴露各种<code>getter</code>方法来获取UI状态。这里用<code>String getMessage()</code>方法来获取具体的消息。</p><h2><a class="anchor" name="controller-view-change"></a>在Controller-View里面处理“change”事件 <a class="hash-link" href="#controller-view-change">#</a></h2><p>在Android中，Flux的Controller-View对应于Activity或者Fragment，我们需要在这里注册Strore发生改变的事件通知，以便在Store变化的时候重新绘制UI。</p><div class="prism language-javascript"><span class="token comment" spellcheck="true">/**
+ * Flux的Controller-View模块
+ * Created by ntop on 18/12/15.
+ */</span>
+public class <span class="token class-name">MainActivity</span> extends <span class="token class-name">AppCompatActivity</span> implements <span class="token class-name">View<span class="token punctuation">.</span>OnClickListener</span> <span class="token punctuation">{</span>
+    private EditText vMessageEditor<span class="token punctuation">;</span>
+    private Button vMessageButton<span class="token punctuation">;</span>
+    private TextView vMessageView<span class="token punctuation">;</span>
+
+    private Dispatcher dispatcher<span class="token punctuation">;</span>
+    private ActionsCreator actionsCreator<span class="token punctuation">;</span>
+    private MessageStore store<span class="token punctuation">;</span>
+
+    @Override
+    protected void <span class="token function">onCreate<span class="token punctuation">(</span></span>Bundle savedInstanceState<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        super<span class="token punctuation">.</span><span class="token function">onCreate<span class="token punctuation">(</span></span>savedInstanceState<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">setContentView<span class="token punctuation">(</span></span>R<span class="token punctuation">.</span>layout<span class="token punctuation">.</span>activity_main<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">initDependencies<span class="token punctuation">(</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">setupView<span class="token punctuation">(</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    @Override
+    protected void <span class="token function">onDestroy<span class="token punctuation">(</span></span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        super<span class="token punctuation">.</span><span class="token function">onDestroy<span class="token punctuation">(</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        dispatcher<span class="token punctuation">.</span><span class="token function">unregister<span class="token punctuation">(</span></span>store<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    private void <span class="token function">initDependencies<span class="token punctuation">(</span></span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        dispatcher <span class="token operator">=</span> Dispatcher<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        actionsCreator <span class="token operator">=</span> ActionsCreator<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span>dispatcher<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        store <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">MessageStore</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        dispatcher<span class="token punctuation">.</span><span class="token function">register<span class="token punctuation">(</span></span>store<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    private void <span class="token function">setupView<span class="token punctuation">(</span></span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        vMessageEditor <span class="token operator">=</span> <span class="token punctuation">(</span>EditText<span class="token punctuation">)</span> <span class="token function">findViewById<span class="token punctuation">(</span></span>R<span class="token punctuation">.</span>id<span class="token punctuation">.</span>message_editor<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        vMessageView <span class="token operator">=</span> <span class="token punctuation">(</span>TextView<span class="token punctuation">)</span> <span class="token function">findViewById<span class="token punctuation">(</span></span>R<span class="token punctuation">.</span>id<span class="token punctuation">.</span>message_view<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        vMessageButton <span class="token operator">=</span> <span class="token punctuation">(</span>Button<span class="token punctuation">)</span> <span class="token function">findViewById<span class="token punctuation">(</span></span>R<span class="token punctuation">.</span>id<span class="token punctuation">.</span>message_button<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        vMessageButton<span class="token punctuation">.</span><span class="token function">setOnClickListener<span class="token punctuation">(</span></span><span class="token keyword">this</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    @Override
+    public void <span class="token function">onClick<span class="token punctuation">(</span></span>View view<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        int id <span class="token operator">=</span> view<span class="token punctuation">.</span><span class="token function">getId<span class="token punctuation">(</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>id <span class="token operator">==</span> R<span class="token punctuation">.</span>id<span class="token punctuation">.</span>message_button<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>vMessageEditor<span class="token punctuation">.</span><span class="token function">getText<span class="token punctuation">(</span></span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                actionsCreator<span class="token punctuation">.</span><span class="token function">sendMessage<span class="token punctuation">(</span></span>vMessageEditor<span class="token punctuation">.</span><span class="token function">getText<span class="token punctuation">(</span></span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">toString<span class="token punctuation">(</span></span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                vMessageEditor<span class="token punctuation">.</span><span class="token function">setText<span class="token punctuation">(</span></span><span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    private void <span class="token function">render<span class="token punctuation">(</span></span>MessageStore store<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        vMessageView<span class="token punctuation">.</span><span class="token function">setText<span class="token punctuation">(</span></span>store<span class="token punctuation">.</span><span class="token function">getMessage<span class="token punctuation">(</span></span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    @Override
+    protected void <span class="token function">onResume<span class="token punctuation">(</span></span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        super<span class="token punctuation">.</span><span class="token function">onResume<span class="token punctuation">(</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        store<span class="token punctuation">.</span><span class="token function">register<span class="token punctuation">(</span></span><span class="token keyword">this</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    @Override
+    protected void <span class="token function">onPause<span class="token punctuation">(</span></span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        super<span class="token punctuation">.</span><span class="token function">onPause<span class="token punctuation">(</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        store<span class="token punctuation">.</span><span class="token function">unregister<span class="token punctuation">(</span></span><span class="token keyword">this</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    @Subscribe
+    public void <span class="token function">onStoreChange<span class="token punctuation">(</span></span>Store<span class="token punctuation">.</span>StoreChangeEvent event<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token function">render<span class="token punctuation">(</span></span>store<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></div><p>这部分的代码比较多，首先在 <code>onCreatre(...)</code> 方法中初始化了依赖和需要的UI组件。最重要的是 <code>onStoreChange(...)</code> 方法，这个方法是注册在Store中回调（使用EventBus的<code>@Subscribe</code>注解标识），当Store发生变化的时候会触发这个方法，我们在这里调用<code>render()</code>方法重绘整个界面。</p><h2><a class="anchor" name="action"></a>创建Action <a class="hash-link" href="#action">#</a></h2><p>Action是简单的POJO类型，只提供两个字段：<code>type</code> 和 <code>data</code>, 分别记录Action的类型和数据。注意Action一旦创建是不可更改的，
+所以它的字段类型修饰为<code>final</code>类型。</p><div class="prism language-javascript">public class <span class="token class-name">Action</span>&lt;T<span class="token operator">&gt;</span> <span class="token punctuation">{</span>
+    private final String type<span class="token punctuation">;</span>
+    private final T data<span class="token punctuation">;</span>
+
+    <span class="token function">Action<span class="token punctuation">(</span></span>String type<span class="token punctuation">,</span> T data<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>type <span class="token operator">=</span> type<span class="token punctuation">;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>data <span class="token operator">=</span> data<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    public String <span class="token function">getType<span class="token punctuation">(</span></span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> type<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    public T <span class="token function">getData<span class="token punctuation">(</span></span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> data<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></div><p>下面是一个业务相关的Action实现：</p><div class="prism language-javascript">public class <span class="token class-name">MessageAction</span> extends <span class="token class-name">Action</span>&lt;String<span class="token operator">&gt;</span> <span class="token punctuation">{</span>
+    public static final String ACTION_NEW_MESSAGE <span class="token operator">=</span> <span class="token string">&quot;new_message&quot;</span><span class="token punctuation">;</span>
+
+    <span class="token function">MessageAction<span class="token punctuation">(</span></span>String type<span class="token punctuation">,</span> String data<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token function">super<span class="token punctuation">(</span></span>type<span class="token punctuation">,</span> data<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></div><p>这个实现非常简单，仅仅多定义了一个Action类型字段：<code>public static final String ACTION_NEW_MESSAGE = &quot;new_message&quot;</code>。如你所见，Action都是这么简单的，不包含任何业务逻辑。</p><h2><a class="anchor" name="actioncreator"></a>创建ActionCreator <a class="hash-link" href="#actioncreator">#</a></h2><p>ActionCreator 是Flux架构中第“四”个最重要的模块（前三：Dispatcher、Store、View），这里实际上处理很多工作，提供有一个有语义的API，构建Action，处理网络请求等。</p><div class="prism language-javascript"><span class="token comment" spellcheck="true">/**
+ * Flux的ActionCreator模块
+ * Created by ntop on 18/12/15.
+ */</span>
+public class <span class="token class-name">ActionsCreator</span> <span class="token punctuation">{</span>
+
+    private static ActionsCreator instance<span class="token punctuation">;</span>
+    final Dispatcher dispatcher<span class="token punctuation">;</span>
+
+    <span class="token function">ActionsCreator<span class="token punctuation">(</span></span>Dispatcher dispatcher<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>dispatcher <span class="token operator">=</span> dispatcher<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    public static ActionsCreator <span class="token keyword">get</span><span class="token punctuation">(</span>Dispatcher dispatcher<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>instance <span class="token operator">==</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            instance <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ActionsCreator</span><span class="token punctuation">(</span>dispatcher<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">return</span> instance<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    public void <span class="token function">sendMessage<span class="token punctuation">(</span></span>String message<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        dispatcher<span class="token punctuation">.</span><span class="token function">dispatch<span class="token punctuation">(</span></span><span class="token keyword">new</span> <span class="token class-name">MessageAction</span><span class="token punctuation">(</span>MessageAction<span class="token punctuation">.</span>ACTION_NEW_MESSAGE<span class="token punctuation">,</span> message<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></div><p>此处提供了一个 <code>sendMessage(String message)</code> ，就像名字暗示的那样，这个方法用来发送消息（到Store）。在方法内部，会创建一个<code>MessageAction</code>来封装数据和Action类型，并通过Dispatcher发送到Store。</p><h2><a class="anchor" name="model"></a>Model <a class="hash-link" href="#model">#</a></h2><p>无论是基于哪种框架的应用都需要Model模块，在这个简单的“HelloWorld”应用中，其实用一个String即可传递消息，但是为了架构的完整和更好的语义表达，定义一个Message类型封装一个String字段作为Model。</p><p>希望通过这个简单的HelloWorld应用，能够让你一窥Flux的面貌。更复杂的应用，查看TodoList和Chat示例。</p></div><div class="docs-prevnext"><a class="docs-next" href="todo-list.html#content">Next →</a></div></div></section><footer class="wrap"><div class="right">© 2014-2015 AndroidFlux.</div></footer></div><div id="fb-root"></div><script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+            ga('create', 'UA-387204-10', 'facebook.github.io');
+            ga('send', 'pageview');
+
+            !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)
+            ){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";
+            fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+          </script></body></html>

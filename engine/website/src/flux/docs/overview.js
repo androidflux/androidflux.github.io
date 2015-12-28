@@ -85,7 +85,7 @@ var Post = React.createClass({
     content: content
   },
   render: function() {
-    return <Layout metadata={{"id":"overview","title":"AndroidFlux一览","layout":"docs","category":"Quick Start","permalink":"docs/overview.html","next":"todo-list"}}>{content}</Layout>;
+    return <Layout metadata={{"id":"overview","title":"AndroidFlux一览","layout":"docs","category":"Quick Start","permalink":"docs/overview.html","next":"helloworld"}}>{content}</Layout>;
   }
 });
 module.exports = Post;
