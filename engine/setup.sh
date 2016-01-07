@@ -10,7 +10,7 @@ cd website
 node server/generate.js
 # 2. cleanup root directory
 cd ../../
-rm -rf `ls | egrep -v engine`
+rm -rf `ls | egrep -v '(engine|README.md)'`
 # 3. copy building result to root
 cd engine
 cp -R website/build/flux/* ../
