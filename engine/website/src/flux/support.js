@@ -21,6 +21,12 @@ var support = React.createClass({
                 可以在<a href="https://github.com/androidflux/androidflux.github.io/issues">GithubIssue</a>领取任务。
                 如何更新文档查看<a href="https://github.com/androidflux/androidflux.github.io/tree/master/engine">这里的说明</a>。    
             </p>
+            <p>
+                目前参与同学：
+                <a href="https://github.com/ntop001">@ntop001</a>、
+                <a href="https://github.com/JiangDaYa0">@JiangDaYa0</a>、
+                <a href="https://github.com/ValuesFeng">@ValuesFeng</a>
+            </p>
             </div>
         </section>
 
