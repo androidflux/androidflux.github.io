@@ -10,7 +10,7 @@ module.exports = {
       "layout": "docs",
       "category": "Guides",
       "permalink": "docs/actions-and-the-dispatcher.html",
-      "next": "testing-flux-applications"
+      "next": "store-and-data-persistence"
     },
     {
       "id": "chat",
@@ -82,6 +82,14 @@ module.exports = {
       "category": "Complementary",
       "permalink": "http://facebook.github.io/react/",
       "next": "immutable"
+    },
+    {
+      "id": "store-and-data-persistence",
+      "title": "Stores和数据存储",
+      "layout": "docs",
+      "category": "Guides",
+      "permalink": "docs/store-and-data-persistence.html",
+      "next": "testing-flux-applications"
     },
     {
       "id": "testing-flux-applications",
