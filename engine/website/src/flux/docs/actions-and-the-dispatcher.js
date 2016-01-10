@@ -42,7 +42,7 @@ var Post = React.createClass({
     content: content
   },
   render: function() {
-    return <Layout metadata={{"id":"actions-and-the-dispatcher","title":"Actions and the Dispatcher","layout":"docs","category":"Guides","permalink":"docs/actions-and-the-dispatcher.html","next":"store-and-data-persistence"}}>{content}</Layout>;
+    return <Layout metadata={{"id":"actions-and-the-dispatcher","title":"Actions and the Dispatcher","layout":"docs","category":"Guides","permalink":"docs/actions-and-the-dispatcher.html","next":"async-task-and-network"}}>{content}</Layout>;
   }
 });
 module.exports = Post;

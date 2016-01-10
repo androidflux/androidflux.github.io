@@ -10,6 +10,14 @@ module.exports = {
       "layout": "docs",
       "category": "Guides",
       "permalink": "docs/actions-and-the-dispatcher.html",
+      "next": "async-task-and-network"
+    },
+    {
+      "id": "async-task-and-network",
+      "title": "异步操作和网络",
+      "layout": "docs",
+      "category": "Guides",
+      "permalink": "docs/async-task-and-network.html",
       "next": "store-and-data-persistence"
     },
     {

@@ -4,7 +4,7 @@ title: Actions and the Dispatcher
 layout: docs
 category: Guides
 permalink: docs/actions-and-the-dispatcher.html
-next: store-and-data-persistence
+next: async-task-and-network
 ---
 
 This guide originally appeared as a [post](http://facebook.github.io/react/blog/2014/07/30/flux-actions-and-the-dispatcher.html) on the [React blog](http://facebook.github.io/react/blog/), and has been edited and updated for inclusion here.
