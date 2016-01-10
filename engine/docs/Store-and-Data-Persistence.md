@@ -4,7 +4,7 @@ title: Stores和数据存储
 layout: docs
 category: Guides
 permalink: docs/store-and-data-persistence.html
-next: testing-flux-applications
+next: actions-and-the-dispatcher
 ---
 
 

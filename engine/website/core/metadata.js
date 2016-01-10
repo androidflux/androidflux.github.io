@@ -6,11 +6,11 @@ module.exports = {
   "files": [
     {
       "id": "actions-and-the-dispatcher",
-      "title": "Actions and the Dispatcher",
+      "title": "Actions和Dispatcher",
       "layout": "docs",
       "category": "Guides",
       "permalink": "docs/actions-and-the-dispatcher.html",
-      "next": "async-task-and-network"
+      "next": "testing-flux-applications"
     },
     {
       "id": "async-task-and-network",
@@ -26,7 +26,7 @@ module.exports = {
       "layout": "docs",
       "category": "Quick Start",
       "permalink": "docs/chat.html",
-      "next": "actions-and-the-dispatcher"
+      "next": "async-task-and-network"
     },
     {
       "id": "dispatcher",
@@ -97,7 +97,7 @@ module.exports = {
       "layout": "docs",
       "category": "Guides",
       "permalink": "docs/store-and-data-persistence.html",
-      "next": "testing-flux-applications"
+      "next": "actions-and-the-dispatcher"
     },
     {
       "id": "testing-flux-applications",

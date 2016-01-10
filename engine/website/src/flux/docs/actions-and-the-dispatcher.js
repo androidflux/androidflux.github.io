@@ -4,45 +4,40 @@
 var React = require("React");
 var Layout = require("DocsLayout");
 var content = `
-This guide originally appeared as a [post](http://facebook.github.io/react/blog/2014/07/30/flux-actions-and-the-dispatcher.html) on the [React blog](http://facebook.github.io/react/blog/), and has been edited and updated for inclusion here.
-
-
-The Dispatcher
+Dispatcher
 --------------
 
-The ___dispatcher___ is a singleton, and operates as the central hub of data flow in a Flux application. It is essentially a registry of callbacks, and can invoke these callbacks in order. Each ___store___ registers a callback with the ___dispatcher___. When new data comes into the ___dispatcher___, it then uses these callbacks to propagate that data to all of the ___stores___. The process of invoking the callbacks is initiated through the \`dispatch()\` method, which takes a data payload object as its sole argument. This payload is typically synonymous with an ___action___.
+___Dispatcher___ 作为Flux应用中数据流的中转枢纽，采用单例模式。它的本质是注册回调接口，并且可以有序的调用它们。 每一个 ___Store___ 都在 ___Dispatcher___中进行注册。 当新的数据进入到 ___Dispatcher___中时，它（Dispatcher）会把数据发送给每一个 ___Stores___。 通过 \`dispatch()\`方法把数据发送到各个Store，并且 \`dispatch()\`只有一个传送数据的对象(data-payload-object)作为参数，而它实际上就是Action。
 
 <figure class="diagram">
   <img src="/img/flux-simple-f8-diagram-with-client-action-1300w.png" alt="data flow in Flux with data originating from user interactions" width=650 />
 </figure>
 
-
 Actions and Action Creators
 ---------------------------
 
-When new data enters the system, whether through a person interacting with the application or through a web api call, that data is packaged into an ___action___ — an object literal containing the new fields of data and a specific action type. We often create a library of helper methods called ___action creators___ that not only create the action object, but also pass the ___action___ to the ___dispatcher___.
+无论是用户与应用交互还是网络API的响应，当新的数据输入系统的时候， 这个数据被包装到 ___Action___ — 一个包含了数据和Action类型的对象。我们经常会创建一个类(ActionCreator)包含各种帮助方法，这些方法不仅创建___Action___，并且把Action传递给___Dispatcher___。
 
-Different ___actions___ are identified by a type attribute. When all of the ___stores___ receive the ___action___, they typically use this attribute to determine if and how they should respond to it. In a Flux application, both ___stores___ and ___views___ control themselves; they are not acted upon by external objects. ___Actions___ flow into the ___stores___ through the callbacks they define and register, not through setter methods.
+___Actions___之间通过\`type\`属性进行区分。当所有___Stores___接收到___Action___时，就可以通过明确的\`type\`属性来判断是否处理和怎么处理传来的数据。在一个Flux应用中，___Stores___和___Views___都是自控制的，他们不会响应外部的对象。___Actions___通过___Stores___注册在Dispatcher中的回调接口获取，而不是通过\`set\`方法。
 
-Letting the ___stores___ update themselves eliminates many entanglements typically found in MVC applications, where cascading updates between models can lead to unstable state and make accurate testing very difficult. The objects within a Flux application are highly decoupled, and adhere very strongly to the [Law of Demeter](http://en.wikipedia.org/wiki/Law_of_Demeter), the principle that each object within a system should know as little as possible about the other objects in the system. This results in software that is more maintainable, adaptable, testable, and easier for new engineering team members to understand.
-
-
-Why We Need a Dispatcher
+为什么需要 Dispatcher
 ------------------------
 
-As an application grows, dependencies across different ___stores___ are a near certainty. ___Store___ A will inevitably need Store B to update itself first, so that Store A can know how to update itself. We need the ___dispatcher___ to be able to invoke the callback for Store B, and finish that callback, before moving forward with Store A. To declaratively assert this dependency, a ___store___ needs to be able to say to the ___dispatcher___, "I need to wait for Store B to finish processing this action." The ___dispatcher___ provides this functionality through its \`waitFor()\` method.
+随着一个应用的成长，___Stores___ 之间的依赖是常有的事。StoreA要等到StoreB先更新，所以StoreA应该知道自己什么时候更新，这种情况是不可避免的。我们需要通过___Dispatcher___先调用StoreB的回调，并在回调结束后再去调用StoreA。为了明确的声明依赖关系，一个___Store___ 需要明确的告诉___Dispatcher___，“我需要等到StoreB把Action处理完再执行。” 因此___Dispatcher___ 通过提供\`waitFor()\` 方法来实现这个功能。
 
-The \`dispatch()\` method provides a simple, synchronous iteration through the callbacks, invoking each in turn. When \`waitFor()\` is encountered within one of the callbacks, execution of that callback stops and \`waitFor()\` provides us with a new iteration cycle over the dependencies. After the entire set of dependencies have been fulfilled, the original callback then continues to execute.
+\`dispatch()\` 方法提供回调方法的同步遍历，按顺序的调用回调。当\`waitFor()\`遇到了回调中的某一个时， 当前执行的回调将被停止并且 \`waitFor()\` 会提供给我们一个基于依赖的新的遍历循环。 当全部的依赖被执行完时，原先的callback才会继续被执行。
 
-Further, the \`waitFor()\` method may be used in different ways for different ___actions___, within the same ___store___'s callback.  In one case, Store A might need to wait for Store B.  But in another case, it might need to wait for Store C.  Using \`waitFor()\` within the code block that is specific to an ___action___ allows us to have fine-grained control of these dependencies.
+另外，在同一个Store的回调方法里，\`waitFor()\` 方法可以根据Action的不同类型按不同的方式使用。例如在一种情况下StoreA要等待Store B的执行，但在其他场景下，StoreA可能要等待StoreC的执行。根据Action的类型，在每种\`switch-case\`的代码块里面调用\`waitFor()\` 可以解决细粒度的依赖控制。
 
-Problems arise, however, if we have circular dependencies. That is, if Store A needs to wait for Store B, and Store B needs to wait for Store A, we could wind up in an endless loop. The ___dispatcher___ now available in the Flux repo protects against this by throwing an informative error to alert the developer that this problem has occurred. The developer can then create a third ___store___ and resolve the circular dependency.`
+当存在循环依赖时，会导致问题产生。 比如，StoreA 需要等待StoreB同时StoreB需要等待StoreA，我们将陷于死循环。所以在创建Dispatcher的时候需要特别注意，并避免这个问题。
+
+*译: @JiangDaYa0 修订：@ntop001*`
 var Post = React.createClass({
   statics: {
     content: content
   },
   render: function() {
-    return <Layout metadata={{"id":"actions-and-the-dispatcher","title":"Actions and the Dispatcher","layout":"docs","category":"Guides","permalink":"docs/actions-and-the-dispatcher.html","next":"async-task-and-network"}}>{content}</Layout>;
+    return <Layout metadata={{"id":"actions-and-the-dispatcher","title":"Actions和Dispatcher","layout":"docs","category":"Guides","permalink":"docs/actions-and-the-dispatcher.html","next":"testing-flux-applications"}}>{content}</Layout>;
   }
 });
 module.exports = Post;

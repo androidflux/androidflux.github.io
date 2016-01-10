@@ -49,7 +49,7 @@ var Post = React.createClass({
     content: content
   },
   render: function() {
-    return <Layout metadata={{"id":"store-and-data-persistence","title":"Stores和数据存储","layout":"docs","category":"Guides","permalink":"docs/store-and-data-persistence.html","next":"testing-flux-applications"}}>{content}</Layout>;
+    return <Layout metadata={{"id":"store-and-data-persistence","title":"Stores和数据存储","layout":"docs","category":"Guides","permalink":"docs/store-and-data-persistence.html","next":"actions-and-the-dispatcher"}}>{content}</Layout>;
   }
 });
 module.exports = Post;

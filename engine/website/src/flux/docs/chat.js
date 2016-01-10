@@ -22,7 +22,7 @@ var Post = React.createClass({
     content: content
   },
   render: function() {
-    return <Layout metadata={{"id":"chat","title":"Tutorial – Chat","layout":"docs","category":"Quick Start","permalink":"docs/chat.html","next":"actions-and-the-dispatcher"}}>{content}</Layout>;
+    return <Layout metadata={{"id":"chat","title":"Tutorial – Chat","layout":"docs","category":"Quick Start","permalink":"docs/chat.html","next":"async-task-and-network"}}>{content}</Layout>;
   }
 });
 module.exports = Post;

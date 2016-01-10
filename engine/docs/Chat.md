@@ -4,7 +4,7 @@ title: Tutorial – Chat
 layout: docs
 category: Quick Start
 permalink: docs/chat.html
-next: actions-and-the-dispatcher
+next: async-task-and-network
 ---
 
 This example application was created for the [ForwardJS](http://forwardjs.com/) conference to show an
